@@ -1,6 +1,7 @@
 package com.floyd;
 
-import com.floyd.Observable.Operator;
+import com.floyd.callback.ErrorCallback;
+import com.floyd.callback.SuccessCallback;
 
 public class Main {
 	public static void main(String[] args) {
@@ -42,10 +43,38 @@ public class Main {
 				};
 				return aa;
 			}
-		}).executor().successCallback(new SuccessCallback<Integer>() {
+		}).lift(new Operator<String, Integer>() {
 
 			@Override
-			public void onSuccess(Integer t) {
+			public Observer<Integer> call(final Observer<String> t1) {
+				Observer<Integer> aa = new Observer<Integer>() {
+
+					@Override
+					public void invokeSuccess(Integer t) {
+						System.out.println("555555555555");
+						t1.invokeSuccess(t + "");
+					}
+
+					@Override
+					public void invokeError(int code, String info) {
+						System.out.println("666666666666");
+						t1.invokeError(code, info);
+					}
+
+					@Override
+					public void invokeProgress(int progress) {
+						System.out.println("777777777777");
+						t1.invokeProgress(progress);
+					}
+
+				};
+				return aa;
+			}
+
+		}).executor().successCallback(new SuccessCallback<String>() {
+
+			@Override
+			public void onSuccess(String t) {
 				System.out.println("---------");
 				System.out.println(t);
 			}

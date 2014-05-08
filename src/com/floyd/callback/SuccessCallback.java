@@ -1,4 +1,4 @@
-package com.floyd;
+package com.floyd.callback;
 
 public interface SuccessCallback<T> {
 

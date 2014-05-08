@@ -1,5 +1,17 @@
 package com.floyd;
 
+import com.floyd.callback.ErrorCallback;
+import com.floyd.callback.ProgressCallback;
+import com.floyd.callback.SuccessCallback;
+import com.floyd.function.Func1;
+
+/**
+ * 观察者統一類
+ * 
+ * @author cxf128
+ * 
+ * @param <T>
+ */
 public class Observable<T> {
 
 	final OnSubscribe<T> onSubscribe;
@@ -23,17 +35,14 @@ public class Observable<T> {
 		});
 	}
 
+	/**
+	 * 获取执行器
+	 * 
+	 * @return
+	 */
 	public final EventExecutor executor() {
 		EventExecutor executor = new EventExecutor();
 		return executor;
-	}
-
-	public interface Func1<T1, R> {
-		public R call(T1 t1);
-	}
-
-	public interface Operator<R, T> extends Func1<Observer<R>, Observer<T>> {
-		// cover for generics insanity
 	}
 
 	public class EventExecutor {
