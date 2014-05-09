@@ -1,21 +1,17 @@
 package com.floyd;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.floyd.callback.ErrorCallback;
 import com.floyd.callback.SuccessCallback;
 
 public class Main {
 	public static void main(String[] args) {
+		
+		ExecutorService ex = Executors.newFixedThreadPool(5);
 
-		Observable.create(new OnSubscribe<String>() {
-
-			@Override
-			public void call(Observer<String> observer) {
-				System.out.println("111111111111111");
-				observer.invokeSuccess("3");
-				observer.invokeError(2, "ssss");
-
-			}
-		}).lift(new Operator<Integer, String>() {
+		Observable.just("5").subscribeOn(ex).lift(new Operator<Integer, String>() {
 
 			@Override
 			public Observer<String> call(final Observer<Integer> t1) {
@@ -43,7 +39,11 @@ public class Main {
 				};
 				return aa;
 			}
-		}).lift(new Operator<String, Integer>() {
+
+			public String toString() {
+				return "life111";
+			}
+		}).subscribeOn(ex).lift(new Operator<String, Integer>() {
 
 			@Override
 			public Observer<Integer> call(final Observer<String> t1) {
@@ -71,20 +71,24 @@ public class Main {
 				return aa;
 			}
 
-		}).executor().successCallback(new SuccessCallback<String>() {
-
-			@Override
-			public void onSuccess(String t) {
-				System.out.println("---------");
-				System.out.println(t);
+			public String toString() {
+				return "life222";
 			}
-		}).errorCallback(new ErrorCallback() {
+		}).executor()
+				.successCallback(new SuccessCallback<String>() {
 
-			@Override
-			public void onError(int code, String info) {
-				System.out.println("code" + code + "-----info" + info);
+					@Override
+					public void onSuccess(String t) {
+						System.out.println("---------");
+						System.out.println(t);
+					}
+				}).errorCallback(new ErrorCallback() {
 
-			}
-		}).execute();
+					@Override
+					public void onError(int code, String info) {
+						System.out.println("code" + code + "-----info" + info);
+
+					}
+				}).execute();
 	}
 }

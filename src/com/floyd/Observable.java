@@ -1,9 +1,11 @@
 package com.floyd;
 
+import java.util.concurrent.ExecutorService;
+
 import com.floyd.callback.ErrorCallback;
 import com.floyd.callback.ProgressCallback;
 import com.floyd.callback.SuccessCallback;
-import com.floyd.function.Func1;
+import com.floyd.operators.OperatorSubscribeOn;
 
 /**
  * 观察者統一類
@@ -20,6 +22,12 @@ public class Observable<T> {
 		this.onSubscribe = onSubscribe;
 	}
 
+	/**
+	 * 创建观察者链
+	 * 
+	 * @param f
+	 * @return
+	 */
 	public final static <T> Observable<T> create(OnSubscribe<T> f) {
 		return new Observable<T>(f);
 	}
@@ -35,6 +43,25 @@ public class Observable<T> {
 		});
 	}
 
+	public final Observable<T> subscribeOn(ExecutorService scheduler) {
+		return nest().lift(new OperatorSubscribeOn<T>(scheduler));
+	}
+
+	public final static <T> Observable<T> just(final T value) {
+		return Observable.create(new OnSubscribe<T>() {
+
+			@Override
+			public void call(Observer<T> observer) {
+				observer.invokeSuccess(value);
+			}
+
+		});
+	}
+
+	public final Observable<Observable<T>> nest() {
+		return just(this);
+	}
+
 	/**
 	 * 获取执行器
 	 * 
@@ -43,6 +70,14 @@ public class Observable<T> {
 	public final EventExecutor executor() {
 		EventExecutor executor = new EventExecutor();
 		return executor;
+	}
+
+	public final void unsafeSubscribe(Observer<T> observer) {
+		try {
+			onSubscribe.call(observer);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
 
 	public class EventExecutor {
@@ -101,7 +136,7 @@ public class Observable<T> {
 			try {
 				onSubscript.call(observer);
 			} catch (Exception e) {
-
+				e.printStackTrace();
 			}
 		}
 
