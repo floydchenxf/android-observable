@@ -34,21 +34,22 @@ public class HelloworldActivity extends Activity {
 						BaseRequest request = new BaseRequest(
 								"http://www.weather.com.cn/data/sk/101110101.html",
 								null, HttpMethod.GET);
-						Response response = request.execute();
-						if (response.isSuccess()) {
-							String content = response.getContentString();
-							observer.invokeSuccess(content);
-							return;
-						}
-						int code = response.getResponseCode();
-						String info = response.getResponseMessage();
-						observer.invokeError(code, info);
+//						Response response = request.execute();
+//						if (response.isSuccess()) {
+//							String content = response.getContentString();
+//							observer.invokeSuccess(content);
+//							return;
+//						}
+//						int code = response.getResponseCode();
+//						String info = response.getResponseMessage();
+						observer.invokeError(1, "");
 					}
 				})
 				.subscribeOn(
 						DefaultExecutorService.getInstance()
 								.getExecutorService()).map(new WeatherMap())
-				.executor().successCallback(new SuccessCallback<WeatherVO>() {
+				.retry(2).executor()
+				.successCallback(new SuccessCallback<WeatherVO>() {
 
 					@Override
 					public void onSuccess(WeatherVO t) {

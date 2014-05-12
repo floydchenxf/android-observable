@@ -10,6 +10,7 @@ import com.floyd.core.callback.ProgressCallback;
 import com.floyd.core.callback.SuccessCallback;
 import com.floyd.core.function.Func1;
 import com.floyd.core.operators.OperatorMap;
+import com.floyd.core.operators.OperatorRetry;
 import com.floyd.core.operators.OperatorSubscribeOn;
 
 /**
@@ -56,6 +57,14 @@ public class Observable<T> {
 	 */
 	public final Observable<T> subscribeOn(ExecutorService scheduler) {
 		return nest().lift(new OperatorSubscribeOn<T>(scheduler));
+	}
+
+	public final Observable<T> retry(int retryCount) {
+		return nest().lift(new OperatorRetry<T>(retryCount));
+	}
+	
+	public final Observable<T> retry() {
+		return nest().lift(new OperatorRetry<T>());
 	}
 
 	public final static <T> Observable<T> just(final T value) {
