@@ -1,6 +1,7 @@
 package com.floyd.map;
 
-import com.floyd.core.function.Func1;
+import rx.functions.Func1;
+
 import com.google.gson.Gson;
 
 public class WeatherMap implements Func1<String, WeatherVO> {
