@@ -1,5 +1,10 @@
 package com.floyd.map;
 
+import rx.Observable;
+import rx.Observable.OnSubscribe;
+import rx.Subscriber;
+import rx.schedulers.Schedulers;
+
 public class WeatherVO {
 
 	private String city;
@@ -55,6 +60,17 @@ public class WeatherVO {
 
 	public void setTime(String time) {
 		this.time = time;
+	}
+
+	public Observable<String> getPublisher() {
+		Observable<String> kk = Observable.create(new OnSubscribe<String>() {
+
+			@Override
+			public void call(Subscriber<? super String> arg0) {
+				arg0.onNext("cxf128");
+			}
+		}).subscribeOn(Schedulers.newThread());
+		return kk;
 	}
 
 }
