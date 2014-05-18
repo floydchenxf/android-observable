@@ -62,12 +62,14 @@ public class WeatherVO {
 		this.time = time;
 	}
 
+	// 发布者需要异步请求才能获取
 	public Observable<String> getPublisher() {
 		Observable<String> kk = Observable.create(new OnSubscribe<String>() {
 
 			@Override
 			public void call(Subscriber<? super String> arg0) {
 				arg0.onNext("cxf128");
+				arg0.onCompleted();
 			}
 		}).subscribeOn(Schedulers.newThread());
 		return kk;
