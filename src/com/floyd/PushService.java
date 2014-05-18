@@ -11,9 +11,15 @@ public class PushService extends AbstractPushService<String> {
 		Observable<String> result = Observable.create(new OnSubscribe<String>() {
 
 			@Override
-			public void call(Subscriber<? super String> arg0) {
-				arg0.onNext("publish");
-				arg0.onCompleted();
+			public void call(final Subscriber<? super String> arg0) {
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						arg0.onNext("publish");
+						arg0.onCompleted();
+					}
+				}).start();
 			}
 		});
 		return result;
